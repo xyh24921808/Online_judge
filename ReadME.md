@@ -14,10 +14,10 @@
 
 
 安装依赖:
-- httplib:[httplib](https://github.com/yhirose/cpp-httplib)
-- boost:[boostcpp](https://www.boost.org/)
-- ctemplate:[ctemplate](https://github.com/OlafvdSpek/ctemplate)
-- jsoncpp:[jsoncpp](https://github.com/open-source-parsers/jsoncpp)
+- [httplib](https://github.com/yhirose/cpp-httplib)
+- [boostcpp](https://www.boost.org/)
+- [ctemplate](https://github.com/OlafvdSpek/ctemplate)
+- [jsoncpp](https://github.com/open-source-parsers/jsoncpp)
 
 
 
