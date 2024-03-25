@@ -21,24 +21,18 @@
 
 
 
-
-
 配置文件信息:
 - 题库 ./oj_server/questions/编号/详细信息
 - 题目列表 ./oj_server/questions.list
 - 编译运行服务 ./oj_server/conf/server_machine.conf
 
 
-
-
-
 进入项目目录:
+
 cd online_judge
-
-
-
 
 
 运行应用:
 ./comilper_server/comilper
+
 ./oj_server/oj_server 端口号
