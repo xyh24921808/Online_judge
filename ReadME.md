@@ -28,9 +28,13 @@
 
 
 进入项目目录:
-
 cd online_judge
 
+编译:
+cd oj_server 
+make
+cd comilper
+make
 
 运行应用:
 ./comilper_server/comilper
