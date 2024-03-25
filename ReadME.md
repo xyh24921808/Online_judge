@@ -14,10 +14,10 @@
 
 
 安装依赖:
-- httplib[https://github.com/yhirose/cpp-httplib]
-- boostcpp[https://www.boost.org/]
-- ctemplate[https://github.com/OlafvdSpek/ctemplate]
-- jsoncpp[https://github.com/open-source-parsers/jsoncpp]
+- [httplib]:[https://github.com/yhirose/cpp-httplib]
+- [boostcpp]:[https://www.boost.org/]
+- [ctemplate]:[https://github.com/OlafvdSpek/ctemplate]
+- [jsoncpp]:[https://github.com/open-source-parsers/jsoncpp]
 
 
 
@@ -31,6 +31,6 @@
 cd online_judge
 
 
-运行应用：
+运行应用:
 ./comilper_server/comilper
-./oj_server/oj_server
+./oj_server/oj_server 端口号
