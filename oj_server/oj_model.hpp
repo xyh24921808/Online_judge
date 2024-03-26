@@ -1,6 +1,7 @@
 #pragma once
 // 题库操作模块
-// 根据que_list题库进行操作
+// my_sql版本
+
 
 #include <iostream>
 #include <string>
@@ -8,11 +9,17 @@
 #include <cassert>
 #include <fstream>
 #include <unordered_map>
+#include<mysql/mysql.h>
 #include "../comm/util.hpp"
 #include "../comm/log.hpp"
 
-const string questions_list = "./questions/questions.list";
-const string questions_path = "./questions/";
+const string oj_questions="oj_questions";
+const string host="127.0.0.1";
+const string user="oj_FX";
+const string password="xyh123456";
+const string db="oj";
+const int sql_port=3306;
+
 
 struct Questions
 {
@@ -35,56 +42,63 @@ class Model
 public:
     Model()
     {
-        assert(Load_quest_list(questions_list));
+        assert(Load_quest_list());
     }
     ~Model()
     {
+
     }
 
     // 加载题目到内存中
-    bool Load_quest_list(const string &questison_list)
+    bool Load_quest_list()
     {
-        ifstream in(questison_list);
+        MYSQL*my_ptr=mysql_init(nullptr);
 
-        if (in.is_open() == false)
+        if(mysql_real_connect(my_ptr,host.c_str(),user.c_str(),password.c_str(),db.c_str(),sql_port,nullptr,0)==nullptr)
         {
-            LOG(FATA) << "致命错误 无法加载题库列表" << endl;
+            LOG(FATA)<<"致命错误 连接数据库失败"<<endl;
             return false;
         }
 
-        string line;
-        // 按行读取list 再进行切分
-        while (getline(in, line))
+        LOG(INFO)<<"连接数据库成功"<<endl;
+
+        string select_sql="SELECT * FROM "+oj_questions;
+        if(mysql_query(my_ptr,select_sql.c_str())!=0)
         {
-
-            vector<string> tokens;
-            StringUtil::String_split(line, " ", tokens);
-
-            if (tokens.size() != 5)
-            {
-                LOG(WARING) << "加载单个题目失败" << endl;
-                continue;
-            }
-
-            Questions q;
-            q.number = tokens[0];
-            q.title = tokens[1];
-            q.star = tokens[2];
-            q.cpu_limit = stoi(tokens[3]);
-            q.mem_limit = stoi(tokens[4]);
-
-            string path = questions_path;
-            path += q.number;
-
-            FileUtil::ReadFile(path + "/desc.txt", q.desc, true);
-            FileUtil::ReadFile(path + "/header.cpp", q.header, true);
-            FileUtil::ReadFile(path + "/tail.cpp", q.tail, true);
-            FileUtil::ReadFile(path + "/tail_main.cpp", q.tail_main, true);
-
-            _questions.insert({q.number, q});
+            LOG(WARING)<<"mysql query fate"<<endl;
+            return false;
         }
-        in.close();
-        LOG(INFO) << "题库加载完毕" << endl;
+
+        MYSQL_RES*res=mysql_store_result(my_ptr);
+
+        int row=mysql_num_rows(res);
+        int col=mysql_num_fields(res);
+
+
+        for(int i=0;i<row;i++)
+        {
+            MYSQL_ROW line=mysql_fetch_row(res);
+            Questions q;
+            
+            q.number=line[0];
+            q.title=line[1];
+            q.star=line[2];
+            q.desc=line[3];
+
+            
+
+            q.header=line[4];
+            q.tail=line[5];
+            q.tail_main=line[6];
+            q.cpu_limit=atoi(line[7]);
+            q.mem_limit=atoi(line[8]);
+
+            _questions[q.number]=q;
+        }
+
+        
+
+        mysql_close(my_ptr);
         return true;
     }
 
