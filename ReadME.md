@@ -27,10 +27,10 @@
 
 ## 安装依赖
 
-[jsoncpp](https://github.com/open-source-parsers/jsoncpp)
-[boostcpp](https://www.boost.org/)
-[ctemplate](https://github.com/OlafvdSpek/ctemplate)
-[MySQL C connect(数据库版存储 见另一个分支)](https://dev.mysql.com/downloads/connector/cpp/)
+- [jsoncpp](https://github.com/open-source-parsers/jsoncpp)
+- [boostcpp](https://www.boost.org/)
+- [ctemplate](https://github.com/OlafvdSpek/ctemplate)
+- [MySQL C connect(数据库版存储 见另一个分支)](https://dev.mysql.com/downloads/connector/cpp/)
 
 
 ## 编译
