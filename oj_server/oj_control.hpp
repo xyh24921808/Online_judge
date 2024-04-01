@@ -12,6 +12,9 @@
 #include "../comm/log.hpp"
 #include "oj_model.hpp"
 #include "oj_veiw.hpp"
+#include "../comm/rest_rpc/rest_rpc.hpp"
+using namespace rest_rpc;
+using namespace rest_rpc::rpc_service;
 using namespace std;
 
 // 主机属性
@@ -268,49 +271,11 @@ public:
     {
 
         string comilper_string;
-        // 第四个参数是否保留测试用例
+        // 第四个参数是 是否保留测试用例
         func(number, in_json, comilper_string, true);
 
         // 4.使用负载均衡模块获取服务器id
-        while (1)
-        {
-            int id = 0;
-            Machine *mac = nullptr;
-            if (_blance.Smart_choice(id, &mac) == false)
-            {
-                break;
-            }
-            LOG(INFO) << "选择主机成功:" << id << " "
-                      << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << endl;
-            // 5.对服务器主机提交https
-
-            httplib::Client cli(mac->Get_ip(), mac->Get_port());
-            mac->Inc_load();
-            if (auto res = cli.Post("/comilper_and_run", comilper_string, "application/json;charset=utf-8"))
-            {
-                if (res.value().status == 200)
-                {
-                    // 6.返回结果给上层
-                    out_json = res.value().body;
-                    mac->Dec_load();
-
-                    LOG(INFO) << "请求编译运行服务成功" << endl;
-                    break;
-                }
-                else
-                {
-                    mac->Dec_load();
-                }
-            }
-            else
-            {
-                _blance.Off_machine(id);
-                LOG(ERROR) << "请求主机失败:" << id << " "
-                           << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << "可能已经离线" << endl;
-
-                //_blance.Show_allmachines();
-            }
-        }
+        Smart_choies_mac(number,comilper_string,in_json,out_json);
     }
 
     // 用户测试代码模块
@@ -322,45 +287,8 @@ public:
         func(number, in_json, comilper_string, false);
 
         // 4.使用负载均衡模块获取服务器id
-        while (1)
-        {
-            int id = 0;
-            Machine *mac = nullptr;
-            if (_blance.Smart_choice(id, &mac) == false)
-            {
-                break;
-            }
-            LOG(INFO) << "选择主机成功:" << id << " "
-                      << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << endl;
-            // 5.对服务器主机提交https
-
-            httplib::Client cli(mac->Get_ip(), mac->Get_port());
-            mac->Inc_load();
-            if (auto res = cli.Post("/comilper_and_run", comilper_string, "application/json;charset=utf-8"))
-            {
-                if (res.value().status == 200)
-                {
-                    // 6.返回结果给上层
-                    out_json = res.value().body;
-                    mac->Dec_load();
-
-                    LOG(INFO) << "请求编译运行服务成功" << endl;
-                    break;
-                }
-                else
-                {
-                    mac->Dec_load();
-                }
-            }
-            else
-            {
-                _blance.Off_machine(id);
-                LOG(ERROR) << "请求主机失败:" << id << " "
-                           << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << "可能已经离线" << endl;
-
-                //_blance.Show_allmachines();
-            }
-        }
+        Smart_choies_mac(number,comilper_string,in_json,out_json);
+        
     }
 
     // 上线所有离线主机
@@ -398,6 +326,42 @@ private:
         out_json = StringUtil::JsonToString(comilper_val);
     }
 
+    // 内部函数
+    void Smart_choies_mac(const string &number,const string&comilper_string,const string &in_json, string &out_json)
+    {
+        while (1)
+        {
+            int id = 0;
+            Machine *mac = nullptr;
+            if (_blance.Smart_choice(id, &mac) == false)
+            {
+                break;
+            }
+            LOG(INFO) << "选择主机成功:" << id << " "
+                      << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << endl;
+
+            // 5.对服务器主机提交
+            rpc_client cli(mac->Get_ip(), mac->Get_port());
+            bool has_cont = cli.connect(5);
+            if (has_cont)
+            {
+                mac->Inc_load();
+                string res = cli.call<string>("comilper_and_run", comilper_string);
+                mac->Dec_load();
+
+                out_json = res;
+                LOG(INFO) << "请求编译运行服务成功" << endl;
+
+                break;
+            }
+            else
+            {
+                _blance.Off_machine(id);
+                LOG(ERROR) << "请求主机失败:" << id << " "
+                           << "信息:" << mac->Get_ip() << ":" << mac->Get_port() << "可能已经离线" << endl;
+            }
+        }
+    }
 private:
     Model _model;        // 构建数据
     Veiw _veiw;          // 网页渲染

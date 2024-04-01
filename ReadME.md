@@ -19,7 +19,7 @@
 
 ## 技术栈
 - 前端:使用html构建用户界面,使用ctemplate渲染页面 如 html/css/js/jquery/ajax
-- 后端：采用cpp 多进程 多线程,使用httplib-c++框架处理HTTP请求
+- 后端：采用cpp 多进程 多线程,使用httplib-c++,rest_rpc框架处理HTTP请求
 - 数据库：采用文件版储存题目信息 [mysql版](https://github.com/xyh24921808/Online_judge/tree/my_sql_model?tab=readme-ov-file)
 
 
