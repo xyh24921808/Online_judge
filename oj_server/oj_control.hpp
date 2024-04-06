@@ -342,7 +342,7 @@ private:
 
             // 5.对服务器主机提交
             rpc_client cli(mac->Get_ip(), mac->Get_port());
-            bool has_cont = cli.connect(5);
+            bool has_cont = cli.connect(1);
             if (has_cont)
             {
                 mac->Inc_load();
