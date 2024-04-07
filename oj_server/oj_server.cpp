@@ -1,11 +1,18 @@
 // oj_server 采用 M C V 模式
+
+
 //  #define CPPHTTPLIB_OPENSSL_SUPPORT //https
 #include "../comm/httplib.h"
 #include "oj_control.hpp"
 #include <iostream>
+
+
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT 
 #include <openssl/ssl.h>
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
+#endif
+
 using namespace std;
 using namespace httplib;
 
