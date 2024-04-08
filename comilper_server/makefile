@@ -1,5 +1,5 @@
 comilper:comilper_server.cpp
-	g++ comilper_server.cpp -o comilper -ljsoncpp 
+	g++ comilper_server.cpp -o comilper -ljsoncpp -pthread
 
 .PHONY:clean
 clean:
