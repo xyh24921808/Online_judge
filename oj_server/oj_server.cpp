@@ -1,16 +1,16 @@
 // oj_server 采用 M C V 模式
 
-
-//  #define CPPHTTPLIB_OPENSSL_SUPPORT //https
+// #define CPPHTTPLIB_OPENSSL_SUPPORT //https
 #include "../comm/httplib.h"
 #include "oj_control.hpp"
 #include <iostream>
 
-
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT 
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
 #include <openssl/ssl.h>
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
+#define SERVER_CERT_FILE "../ssl/cer.pem"
+#define SERVER_PRIVATE_KEY_FILE "../ssl/key.pem"
 #endif
 
 using namespace std;
@@ -28,8 +28,16 @@ void Recovery(int signo)
 int main()
 {
     signal(SIGQUIT, Recovery);
-    // 用户请求的服务路由功能
-    httplib::Server srv;
+
+// https
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+    SSLServer srv(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE);
+#endif
+
+// http
+#ifndef CPPHTTPLIB_OPENSSL_SUPPORT
+    Server srv;
+#endif
 
     Control ctrl;
     ctrl_ptr = &ctrl;
@@ -49,8 +57,7 @@ int main()
                 string html;
 
                 ctrl.One_questsion(number, html);
-                reps.set_content(html, "text/html;charset=utf-8");
-            });
+                reps.set_content(html, "text/html;charset=utf-8"); });
 
     // 对题目进行判题
     srv.Post(R"(/judge/(\d+))", [&ctrl](const Request &reqs, Response &reps)
