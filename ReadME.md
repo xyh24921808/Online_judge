@@ -19,18 +19,22 @@
 
 ## 技术栈
 - 前端:使用html构建用户界面,使用ctemplate渲染页面 如 html/css/js/jquery/ajax
-- 后端：采用cpp 多进程 多线程,使用httplib-c++,rest_rpc框架处理HTTP请求
-- 数据库：采用文件版储存题目信息 [mysql版](https://github.com/xyh24921808/Online_judge/tree/my_sql_model?tab=readme-ov-file)
+- 后端：采用cpp 多进程 多线程,使用httplib-c++,rest_rpc框架处理HTTP/HTTPS请求
+- 数据库：采用(默认)文件版,mysql储存题目信息
+
+## 操作系统
+- Linux or Centos>=7
 
 
-## 如何使用
+# 如何使用
 
 ## 安装依赖
-
-- [jsoncpp](https://github.com/open-source-parsers/jsoncpp)
+- std=c++ >=11
+- [jsoncpp](https://github.com/open-source-parsers/jsoncpp) >=1.9.5
 - [boostcpp](https://www.boost.org/)
 - [ctemplate](https://github.com/OlafvdSpek/ctemplate)
-- [MySQL C connect(数据库版存储 见另一个分支)](https://dev.mysql.com/downloads/connector/cpp/)
+- [rest_rpc](https://github.com/qicosmos/rest_rpc)
+- (https)[openssl](https://github.com/openssl/openssl)>=3.0.0
 
 
 ## 编译
