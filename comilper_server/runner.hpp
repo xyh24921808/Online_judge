@@ -35,7 +35,7 @@ public:
         string _stderr = PathUtil::Stdrun_err(file_name);
 
         umask(0);
-        int _stdin_fd = open(_stdin.c_str(), O_CREAT | O_RDONLY, 0644);
+        int _stdin_fd = open(_stdin.c_str(), O_RDONLY | O_CREAT, 0644);
         int _stdout_fd = open(_stdout.c_str(), O_WRONLY | O_CREAT , 0644);
         int _stderr_fd = open(_stderr.c_str(), O_WRONLY | O_CREAT , 0644);
 

@@ -1,5 +1,5 @@
 oj_server:oj_server.cpp
-	g++ oj_server.cpp -o oj_server -lboost_filesystem -lctemplate -ljsoncpp -pthread
+	g++ oj_server.cpp  -L/usr/lib64/mysql/ -o oj_server -lboost_filesystem -lctemplate -ljsoncpp -lmysqlclient 
 
 .PHONY:clean
 clean:

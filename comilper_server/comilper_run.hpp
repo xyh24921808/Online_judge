@@ -56,7 +56,14 @@ public:
             code_status = -2;
             goto END;
         }
-
+        
+        //向唯一输入文件写入input
+        if(FileUtil::WrtieFile(PathUtil::Stdin(file_name),input)==false)
+        {
+            code_status=-1;
+            goto END;
+        }
+        
         // 编译code
         if (Comilper::Comilp(file_name) == false)
         {

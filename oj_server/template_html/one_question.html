@@ -6,12 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{number}}.{{title}}</title>
-    <!-- 引入ACE插件 -->
-    <!-- 官网链接：https://ace.c9.io/ -->
-    <!-- CDN链接：https://cdnjs.com/libraries/ace -->
-    <!-- 使用介绍：https://www.iteye.com/blog/ybc77107-2296261 -->
-    <!-- https://justcode.ikeepstudying.com/2016/05/ace-editor-%E5%9C%A8%E7%BA%BF%E4%BB%A3%E7%A0%81%E7%BC%96%E8%BE%91%E6%9E%81%E5%85%B6%E9%AB%98%E4%BA%AE/ -->
-    <!-- 引入ACE CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript"
         charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js" type="text/javascript"
@@ -178,6 +172,7 @@
         </div>
         <!-- 提交并且得到结果，并显示 -->
         <div class="part2">
+            <input type="text" id="testInput" placeholder="标准输入 stdin" style="margin-right: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
             <div class="result"></div>
             <button class="btn-submit" onclick="submit()">提交代码</button>
             <!-- 添加测试运行按钮 -->
@@ -185,7 +180,19 @@
         
         </div>
     </div>
+
+    <style>
+        /* 禁用状态的按钮样式 */
+        .btn-submit[disabled], .btn-run[disabled] {
+            background-color: #413c3c; /* 灰色背景 */
+            color: #999; /* 灰色文本 */
+            border-color: #999; /* 灰色边框 */
+            cursor: not-allowed; /* 鼠标不可点击样式 */
+        }
+    </style>
+
     <script>
+        var cooldownTime = 1000; // 1秒冷却时间
         //初始化对象
         editor = ace.edit("code");
 
@@ -244,8 +251,15 @@
                 // 编译运行出错,do nothing
             }
         }
-        function submit() {
-            // alert("嘿嘿!");
+        function submit() 
+        {
+            
+            
+            document.querySelector(".btn-submit").disabled = true;
+            setTimeout(function() {
+                document.querySelector(".btn-submit").disabled = false;
+            }, cooldownTime);
+
             // 1. 收集当前页面的有关数据, 1. 题号 2.代码
             var code = editor.getSession().getValue();
 
@@ -274,10 +288,17 @@
             // 3. 得到结果，解析并显示到 result中
         }
 
-        function runTest() {
+        function runTest() 
+        {
+            document.querySelector(".btn-run").disabled = true;
+        setTimeout(function() {
+            document.querySelector(".btn-run").disabled = false;
+        }, cooldownTime);
+
+
             var code = editor.getSession().getValue();
 
-
+            var testData = document.getElementById("testInput").value;
             var number = $(".container .part1 .left_desc h3 #number").text();
             // console.log(number);
             var judge_url = "/Testrun/" + number;
@@ -291,7 +312,7 @@
                     contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
                     data: JSON.stringify({
                         'code': code,
-                        'input':''
+                        'input':testData
                     }),
                     success: function (data) {
                         //成功得到结果
@@ -302,5 +323,4 @@
         }
     </script>
 </body>
-
 </html>
