@@ -36,12 +36,12 @@ public:
 
         umask(0);
         int _stdin_fd = open(_stdin.c_str(), O_RDONLY | O_CREAT, 0644);
-        int _stdout_fd = open(_stdout.c_str(), O_WRONLY | O_CREAT , 0644);
-        int _stderr_fd = open(_stderr.c_str(), O_WRONLY | O_CREAT , 0644);
+        int _stdout_fd = open(_stdout.c_str(), O_WRONLY | O_CREAT, 0644);
+        int _stderr_fd = open(_stderr.c_str(), O_WRONLY | O_CREAT, 0644);
 
         if (FileUtil::Is_file_exists(_execute) == false)
         {
-            LOG(ERROR) <<"找不到程序文件" << endl;
+            LOG(ERROR) << "找不到程序文件" << endl;
             return -3;
         }
         if (_stderr_fd < 0 || _stdin_fd < 0 || _stdout_fd < 0)
@@ -81,12 +81,11 @@ public:
             close(_stdin_fd);
             close(_stdout_fd);
             close(_stderr_fd);
-            
-            
+
             int status = 0;
             waitpid(pid, &status, 0);
             LOG(INFO) << file_name << "程序运行完毕" << endl;
-            
+
             return status & 0x7F;
         }
     }

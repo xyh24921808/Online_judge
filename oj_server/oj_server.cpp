@@ -16,7 +16,14 @@
 using namespace std;
 using namespace httplib;
 
-int port = 8080;
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+int port = 443;
+#endif
+
+#ifndef CPPHTTPLIB_OPENSSL_SUPPORT
+int port=80;
+#endif
+
 
 static Control *ctrl_ptr = nullptr;
 
