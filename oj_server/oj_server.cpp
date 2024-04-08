@@ -7,7 +7,7 @@ using namespace std;
 using namespace httplib;
 
 
-int port=8080;
+int port=80;
 
 static Control *ctrl_ptr = nullptr;
 
