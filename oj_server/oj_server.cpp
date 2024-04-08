@@ -9,8 +9,8 @@
 #include <openssl/ssl.h>
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
-#define SERVER_CERT_FILE "../ssl/cer.pem"
-#define SERVER_PRIVATE_KEY_FILE "../ssl/key.pem"
+#define SERVER_CERT_FILE "../ssl/cer.pem" //证书路径
+#define SERVER_PRIVATE_KEY_FILE "../ssl/key.pem"//私钥路径
 #endif
 
 using namespace std;
