@@ -32,10 +32,15 @@ void Recovery(int signo)
     ctrl_ptr->RecoveryMachine();
 }
 
-int main()
+int main(int argnum,char*argvs[])
 {
     signal(SIGQUIT, Recovery);
 
+
+    if(argnum==2)
+    {
+        port=atoi(argvs[1]);
+    }
 // https
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
     SSLServer srv(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE);
