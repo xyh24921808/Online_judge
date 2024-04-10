@@ -23,17 +23,17 @@
 - 数据库：采用(默认)文件版,mysql储存题目信息
 
 ## 操作系统
-- Linux or Centos>=7
+- Linux
 
 
 # 如何使用
 
 ## 安装依赖
 - std=c++ >=11
+- rest_rpc:[asio](https://github.com/chriskohlhoff/asio),[msgpack](https://github.com/msgpack)
 - [jsoncpp](https://github.com/open-source-parsers/jsoncpp) >=1.9.5
-- [boostcpp](https://www.boost.org/)
+- [boost](https://www.boost.org/)
 - [ctemplate](https://github.com/OlafvdSpek/ctemplate)
-- [rest_rpc](https://github.com/qicosmos/rest_rpc)
 - (https)[openssl](https://github.com/openssl/openssl)>=3.0.0
 
 
