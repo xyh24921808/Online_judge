@@ -1,8 +1,14 @@
+好的，我已经将搜索按钮移到了左侧，并且使用了与导航栏相同的风格。这里是更新后的 HTML 和 CSS 代码：
+
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>OJ题目列表</title>
     <style>
         body {
@@ -11,9 +17,10 @@
             padding: 0;
             background-color: #f6f6f6;
         }
+
         .navbar {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             background-color: #343a40;
             padding: 15px 0;
             border-radius: 10px;
@@ -24,6 +31,7 @@
             left: 0;
             z-index: 999;
         }
+
         .navbar a {
             color: #fff;
             text-decoration: none;
@@ -31,26 +39,33 @@
             font-size: 18px;
             transition: color 0.3s ease;
         }
+
         .navbar a:hover {
             color: #ffc107;
         }
+
         .navbar .login {
             margin-left: auto;
             margin-right: 15px;
         }
+
         .container {
             max-width: 800px;
-            margin: 100px auto;
+            margin: 180px auto 20px;
+            /* Updated margin */
+            /* Adjusted margin */
             padding: 20px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -59,66 +74,213 @@
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-        th, td {
+
+        th,
+        td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
         th {
             background-color: #f9f9f9;
             color: #333;
             font-weight: bold;
             text-transform: uppercase;
         }
+
         tr:hover {
             background-color: #f2f2f2;
         }
+
         /* Color based on difficulty */
-        .easy { color: green; }
-        .medium { color: yellow; }
-        .hard { color: red; }
+        .easy {
+            color: green;
+        }
+
+        .medium {
+            color: yellow;
+        }
+
+        .hard {
+            color: red;
+        }
+
         /* Remove underline from anchor tags */
         a {
             text-decoration: none;
             color: inherit;
             cursor: pointer;
         }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            /* 垂直居中对齐按钮 */
+            gap: 5px;
+            /* 按钮之间的间距 */
+        }
+
+        .edit-icon,
+        .delete-icon {
+            color: #666;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            opacity: 1;
+            /* Always visible */
+            transition: opacity 0.3s ease;
+            max-width: 60px;
+            /* Max width for buttons */
+        }
+
+        .edit-icon:hover,
+        .delete-icon:hover {
+            color: #FF5733;
+        }
+
+        /* 自定义对话框样式 */
+        .custom-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dialog-content {
+            text-align: center;
+        }
+
+        .dialog-btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .dialog-btn:first-child {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .dialog-btn:last-child {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            /* Added relative positioning */
+        }
+
+        #search-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: calc(70% - 70px);
+            /* Adjusted width */
+            transition: width 0.3s ease;
+        }
+
+        #search-btn {
+            padding: 10px 20px;
+            background-color: #343a40;
+            /* 更改背景色 */
+            color: #fff;
+            /* 更改文本颜色 */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* 添加过渡效果 */
+            position: absolute;
+            /* 绝对定位 */
+            right: 45;
+            /* 按钮紧贴左边 */
+            top: 0;
+            /* 按钮顶部对齐 */
+        }
+
+
+        #search-btn:hover {
+            background-color: #23272b;
+            /* 更改悬停背景色 */
+        }
     </style>
 </head>
+
 <body>
     <!-- Navigation bar -->
     <div class="navbar">
         <a href="/">首页</a>
         <a href="/all_questions">题库</a>
-        <a href="#">竞赛(待开发)</a>
-        <a href="#">讨论(待开发)</a>
-        <a href="#">求职(待开发)</a>
-        <a class="login" href="#">登录</a>
+        <div class="login">
+            <a href="/user_index">登录</a>
+            <a href="#" style="display: none;">注销</a>
+        </div>
     </div>
 
     <div class="container">
         <h1>OJ题目列表</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>题号</th>
-                    <th>标题</th>
-                    <th>难度</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#question_list}}
-                <tr>
-                    <td>{{number}}</td>
-                    <td><a href="/question/{{number}}">{{title}}</a></td>
-                    <td class="{{difficulty}}">{{star}}</td>
-                </tr>
-                {{/question_list}}
-            </tbody>
-        </table>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="搜索题目的题号,标题,内容" style="width: 70%;">
+            <button id="search-btn" class="search-button">搜索</button>
+        </div>
+
+        <div id="question-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>题号</th>
+                        <th>标题</th>
+                        <th>难度</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#question_list}}
+                    <tr>
+                        <td>{{number}}</td>
+                        <td><a href="/question/{{number}}">{{title}}</a></td>
+                        <td class="{{difficulty}}">{{star}}</ td>
+                        <td>
+                            <div class="button-container">
+                                <a href="#" class="edit-icon"><i class="fas fa-edit"></i> 修改</a>
+                                <a href="#" class="delete-icon" data-question-id="{{number}}"><i
+                                        class="fas fa-trash-alt"></i> 删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/question_list}}
+
+
+                </tbody>
+            </table>
+        </div>
     </div>
 
-<script>
+    <!-- 自定义对话框 -->
+    <div id="custom-dialog" class="custom-dialog">
+        <div class="dialog-content">
+            <p>请选择要进行的操作：</p>
+            <button class="dialog-btn" id="edit-info-btn">修改信息</button>
+            <button class="dialog-btn" id="edit-code-btn">修改代码</button>
+            <button class="dialog-btn return-btn">返回</button>
+        </div>
+    </div>
+
+    <script>
         // 模拟题目数据
         var questionData = [
             // 这里放置题目数据
@@ -150,13 +312,124 @@
         loadQuestions();
 
         // 监听滚动事件
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             // 检查是否滚动到页面底部
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
                 // 加载更多题目
                 loadQuestions();
             }
         });
+
+        $(document).ajaxSend(function (event, xhr, settings) {
+            var token = localStorage.getItem('token');
+            if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+            }
+        });
+
+        $(document).ready(function () {
+            console.log(localStorage.getItem('token'))
+            var token = localStorage.getItem('token');
+            if (token) {
+                $('.login a:first-child').hide(); // 隐藏登录按钮
+                $('.login a:last-child').show(); // 显示注销按钮
+
+                // 添加注销功能
+                $('.login a:last-child').click(function () {
+                    localStorage.removeItem('token'); // 清除 token
+                    $('.login a:first-child').show(); // 显示登录按钮
+                    $('.login a:last-child').hide(); // 隐藏注销按钮
+                });
+            }
+        });
+
+        $(document).ready(function () {
+            $('.delete-icon').click(function (e) {
+                e.preventDefault();
+                var questionId = $(this).data('question-id');
+                if (confirm('确定要删除这个题目吗？')) {
+                    $.ajax({
+                        url: '/del_question/' + questionId, // 向服务器发送删除请求的URL
+                        method: 'POST',
+                        dataType: 'json', // 告知server，我需要什么格式
+                        contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
+                        data: JSON.stringify
+                            ({
+                                number: questionId
+                            }),
+                        success: function (response) {
+                            if (response.status === 1) {
+                                // 如果操作成功，执行相应的操作
+                                alert(response.reason);
+                                // 这里可以执行刷新页面或其他操作
+                                location.reload();
+                            }
+                            else {
+                                // 如果操作失败，根据服务器返回的原因进行处理
+                                alert(response.reason);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            // 如果发生错误，处理错误情况
+                            alert('删除失败：' + error);
+                        }
+                    });
+                }
+            });
+
+            $('.delete-icon, .edit-icon').click(function (e) {
+                var questionId = $(this).closest('tr').find('.delete-icon').data('question-id'); // 获取题目 
+                var token = localStorage.getItem('token');
+                if (!token) {
+                    alert('请先登录');
+                    return;
+                }
+
+                // 进行页面跳转
+                var editInfoUrl = '/question_modify_info_index/' + questionId;
+                var editCodeUrl = '/question_modify_code_index/'
+
+                    + questionId;
+
+                // 在点击事件触发时执行页面跳转
+                $('#edit-info-btn').click(function () {
+                    window.location.href = editInfoUrl;
+                });
+
+                $('#edit-code-btn').click(function () {
+                    window.location.href = editCodeUrl;
+                });
+
+                $('#custom-dialog').fadeIn(); // 显示自定义对话框
+            });
+
+            // 返回按钮点击事件
+            $('.return-btn').click(function () {
+                $('#custom-dialog').fadeOut(); // 隐藏对话框
+            });
+        });
+
+        $('#search-input').keypress(function (e) {
+            if (e.which === 13) { // 判断按下的键是否是回车键
+                $('#search-btn').click(); // 触发搜索按钮的点击事件
+            }
+        });
+
+        $('#search-btn').click(function () {
+            var searchWord = $('#search-input').val().trim(); // 获取搜索词并去除两端空格
+            if (searchWord === '') {
+                alert('请输入搜索词');
+                return;
+            }
+
+            // 构造搜索词对应的URL
+            var searchUrl = '/all_questions?word=' + encodeURIComponent(searchWord);
+            // 页面跳转
+            window.location.href = searchUrl;
+
+
+        });
     </script>
 </body>
+
 </html>

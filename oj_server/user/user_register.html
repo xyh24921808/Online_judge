@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>用户注册</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #343a40;
+            padding: 15px 0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #ffc107;
+        }
+
+        .navbar .login {
+            margin-left: auto;
+            margin-right: 15px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="code"],
+        input[type="submit"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #343a40;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <a href="/">首页</a>
+        <a href="/all_questions">题库</a>
+        <a class="login" href="/user_index">登录</a>
+    </div>
+
+    <div class="container">
+        <h1>注册</h1>
+        <form id="registration-form">
+            <label for="account">账号:</label>
+            <input type="text" id="account" name="account" required>
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="email">邮箱:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="phone">电话号码:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <label for="code">注册码:</label>
+            <input type="code" id="code" name="code" required>
+
+            <input type="submit" value="注册">
+        </form>
+    </div>
+
+    <script>
+        
+        document.getElementById('registration-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止默认的表单提交行为
+
+            // 获取输入字段的值
+            var account = document.getElementById('account').value;
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var email = document.getElementById('email').value;
+            var phone = document.getElementById('phone').value;
+            var code = document.getElementById('code').value;
+
+            var url = "/register"; // 处理注册的URL
+
+            // 使用AJAX调用注册用户
+            $.ajax
+                ({
+                    method: 'POST',
+                    url: url,
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    data: JSON.stringify
+                        ({
+                            'account': account,
+                            'username': username,
+                            'password': password,
+                            'email': email,
+                            'phone': phone,
+                            'invcode': code
+                        }),
+
+
+                    success: function (data) 
+                    {
+                        if (data.status === 1) 
+                        {
+                            alert("注册成功");
+                            document.getElementById('registration-form').reset();
+                            // 重定向到登录页面
+                            window.location.href = "/user_index";
+                            // 注册成功后重定向或执行其他操作
+                        }
+                        else 
+                        {
+                            alert(data.reason);
+                        }
+                    }
+                });
+        });
+
+        $(document).ajaxSend(function(event, xhr, settings) 
+        {
+            var token = localStorage.getItem('token');
+            if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+            }
+        });
+    </script>
+</body>
+</html>

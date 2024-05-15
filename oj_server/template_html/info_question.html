@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>修改题目{{number}}信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: flex-start;
+            background-color: #343a40;
+            padding: 15px 0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #ffc107;
+        }
+
+        .navbar .login {
+            margin-left: auto;
+            margin-right: 15px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: calc(100% - 22px);
+            /* 考虑到边框和填充，减去额外的宽度 */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            display: block;
+            /* 将按钮变为块级元素 */
+            width: 100%;
+            /* 按钮宽度与容器宽度相同 */
+            padding: 10px 0;
+            /* 调整按钮内边距 */
+            background-color: #343a40;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #212529;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <div class="navbar">
+        <a href="/">首页</a>
+        <a href="/all_questions">题库</a>
+        <div class="login">
+            <a href="/user_index">登录</a>
+            <a href="#" style="display: none;">注销</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>修改题目{{number}}信息</h1>
+        <form id="edit-question-form">
+            <label for="title">标题</label>
+            <input type="text" id="title" name="title" value="{{title}}" required>
+
+            <label for="difficulty">难度</label>
+            <input type="text" id="difficulty" name="difficulty" value="{{star}}" required>
+
+            <label for="description">描述</label>
+            <textarea id="description" name="description" rows="5" required>{{desc}}</textarea>
+
+            <button type="button" id="submit-btn">提交</button>
+        </form>
+    </div>
+
+    <!-- 导航栏 -->
+    <script>
+        $(document).ready(function () {
+            // 从 localStorage 中获取 token
+            var token = localStorage.getItem('token');
+
+            // 如果存在 token，则显示注销按钮
+            if (token) {
+                $('.login a:first-child').hide(); // 隐藏登录按钮
+                $('.login a:last-child').show(); // 显示注销按钮
+            }
+
+            // 点击注销按钮时，执行注销操作
+            $('.login a:last-child').click(function () {
+                localStorage.removeItem('token'); // 清除 token
+                $('.login a:first-child').show(); // 显示登录按钮
+                $('.login a:last-child').hide(); // 隐藏注销按钮
+            });
+
+            // 点击提交按钮时触发
+            $('#submit-btn').click(function () {
+                // 获取输入框中的值
+                var title = $('#title').val();
+                var difficulty = $('#difficulty').val();
+                var description = $('#description').val();
+
+                // 从当前页面 URL 中提取题号
+                var numberMatch = window.location.href.match(/\/(\d+)\/?$/);
+                var number = numberMatch ? numberMatch[1] : null;
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    url: '/modify_question_info/' + number, // 提交数据的 URL
+                    method: 'POST',   // 向后端发起请求的方式
+                    dataType: 'json', // 告知 server，我需要什么格式
+                    contentType: 'application/json;charset=utf-8',  // 告知 server，我给你的是什么格式
+                    data: JSON.stringify({
+                        'title': title,
+                        'star': difficulty,
+                        'desc': description
+                    }),
+                    // 在请求头中添加 token
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function (response) {
+                        // 判断操作是否成功
+                        if (response.status === 1) {
+                            alert('题目信息已更新！');
+                        } else {
+                            alert('更新题目信息失败：' + response.reason);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // 处理出错的情况
+                        alert('更新题目信息失败：' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

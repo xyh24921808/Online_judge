@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            /* Changed height to min-height to allow content to push footer down */
+            position: relative;
+            /* Added to allow proper positioning of footer */
         }
 
         /* Container styles */
@@ -46,14 +50,13 @@
             left: 0;
             z-index: 999;
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
 
         .navbar a {
             color: #fff;
             text-decoration: none;
-            margin: 0 25px; /* Increase the spacing between the links */
+            margin: 0 25px;
             font-size: 18px;
             transition: color 0.3s ease;
         }
@@ -62,7 +65,7 @@
             color: #ffc107;
         }
 
-        .navbar .login {
+        .navbar .login-container {
             margin-left: auto;
         }
 
@@ -102,25 +105,87 @@
         .content a:hover {
             background-color: #ffca28;
         }
+
+        /* Footer styles */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #343a40;
+            padding: 10px 0;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .footer p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer a {
+            color: #fff;
+            /* 设置链接颜色为白色 */
+            text-decoration: none;
+            /* 去掉下划线 */
+        }
+
+        .footer img {
+            width: 20px;
+            /* 设置图标宽度 */
+            height: 20px;
+            /* 设置图标高度 */
+            margin-right: 5px;
+            /* 设置图标与文本之间的间距 */
+        }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <!-- Navbar -->
-    <div class="navbar">
-        <a href="#">首页</a>
-        <a href="/all_questions">题库</a>
-        <a href="#">竞赛(待开发)</a>
-        <a href="#">讨论(待开发)</a>
-        <a href="#">求职(待开发)</a>
-        <a class="login" href="#">登录</a>
+    <div class="container">
+        <!-- Navbar -->
+        <div class="navbar">
+            <a href="#">首页</a>
+            <a href="/all_questions">题库</a>
+            <div class="login-container">
+                <a class="login" href="/user_index">登录</a>
+                <a class="logout" href="#" style="display: none;">注销</a>
+            </div>
+        </div>
+        <!-- Content -->
+        <div class="content">
+            <h1>欢迎来到我的OnlineJudge平台</h1>
+            <p>这是我个人独立开发的一个在线OJ平台</p>
+            <a href="/all_questions">开始编程</a>
+        </div>
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer">
+                <p><img src="./gongan.png" alt="备案图标"></p>
+            </div>
+        </div>
     </div>
-    <!-- Content -->
-    <div class="content">
-        <h1>欢迎来到我的OnlineJudge平台</h1>
-        <p>这是我个人独立开发的一个在线OJ平台</p>
-        <a href="/all_questions">开始编程</a>
-    </div>
-</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var token = localStorage.getItem('token');
+            if (token) {
+                // 隐藏登录按钮，显示注销按钮
+                document.querySelector('.login').style.display = 'none';
+                document.querySelector('.logout').style.display = 'inline-block';
+
+                // 注销功能
+                document.querySelector('.logout').addEventListener('click', function () {
+                    localStorage.removeItem('token'); // 清除 token
+                    // 显示登录按钮，隐藏注销按钮
+                    document.querySelector('.login').style.display = 'inline-block';
+                    document.querySelector('.logout').style.display = 'none';
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

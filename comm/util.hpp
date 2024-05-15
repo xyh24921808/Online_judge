@@ -1,3 +1,4 @@
+// 工具库
 #pragma once
 #include <iostream>
 #include <string>
@@ -13,12 +14,26 @@
 #include <atomic>
 #include <fstream>
 #include <json/json.h>
-#include <boost/tokenizer.hpp>
+
+#include "../comm/cppjieba/Jieba.hpp"
+
 using namespace std;
 
 const string path = "./temp/";
 
-// 工具库
+// cppjieba 词库路径
+const string DICT_PATH = "../comm/cppjieba/dict/jieba.dict.utf8";
+const string HMM_PATH = "../comm/cppjieba/dict/hmm_model.utf8";
+const string USER_DICT_PATH = "../comm/cppjieba/dict/user.dict.utf8";
+const string IDF_PATH = "../comm/cppjieba/dict/idf.utf8";
+const string STOP_WORD_PATH = "../comm/cppjieba/dict/stop_words.utf8";
+
+// 编程语言
+enum progra_lage
+{
+    CPP,
+    C
+};
 
 class TimeUtil
 {
@@ -49,9 +64,12 @@ public:
     }
 
     // 构建完整源文件路径名+后缀
-    static string Src(const string &file_name)
+    static string Src(const string &file_name, const progra_lage &lag)
     {
-        return Addsuffix(file_name, ".cpp");
+        if (lag == CPP)
+            return Addsuffix(file_name, ".cpp");
+        else
+            return "";
     }
 
     // 构建完整程序路径名+后缀
@@ -81,7 +99,7 @@ public:
     {
         return Addsuffix(file_name, ".stderr");
     }
-    //////////////////////////////
+
 private:
 };
 
@@ -174,45 +192,127 @@ public:
     // 字符串切分
     static void String_split(const string &src, const string &c, vector<string> &target)
     {
-        target.clear();
-        typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
+        target.clear(); // 清空目标向量
 
-        // 定义分隔符
-        boost::char_separator<char> sep(c.c_str());
-
-        tokenizer tokens(src, sep);
-        for (auto &x : tokens)
+        size_t start = 0, end = 0;
+        while ((end = src.find(c, start)) != string::npos)
         {
-            target.push_back(x);
+            // 将从 start 到 end 之间的子串加入目标向量
+            target.push_back(src.substr(start, end - start));
+            start = end + c.length(); // 更新起始位置
+        }
+
+        // 处理最后一个分隔符之后的子串
+        target.push_back(src.substr(start));
+    }
+
+private:
+};
+
+// 自定义比较工具
+class CmpUtil
+{
+public:
+    // 难度比较
+    static bool Starcmp(const string &a, const string &b)
+    {
+        int n1, n2;
+        if (a == "简单")
+            n1 = 0;
+        else if (a == "中等")
+            n1 = 1;
+        else
+            n1 = 2;
+
+        if (b == "简单")
+            n2 = 0;
+        else if (b == "中等")
+            n2 = 1;
+        else
+            n2 = 2;
+
+        return n1 < n2;
+    }
+
+private:
+};
+
+// 编程语言工具
+class Prog_language_Util
+{
+public:
+    static bool lang_string_to(const string &lag_name, progra_lage &out_lag)
+    {
+        if (lag_name == "CPP" || lag_name == "c++" || lag_name == "cpp" || lag_name == "C++")
+        {
+            out_lag = CPP;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// cppjieba 字符串分词 工具
+class Jieba_util
+{
+public:
+    Jieba_util()
+    {
+        ifstream in(STOP_WORD_PATH);
+        if (!in.is_open())
+        {
+            cout << "open SOTP_WORD error" << endl;
+        }
+
+        string line;
+        while (getline(in, line))
+        {
+            stop_words[line]++;
+        }
+
+        in.close();
+    }
+
+    // 分词
+    static void Cutstring(const string &src, vector<string> &vc, bool remove_stop_word = true)
+    {
+        if (stop_words.size() == 0)
+        {
+            Jieba_util();
+        }
+
+        vector<string> res;
+        jieba.Cut(src, vc);
+
+        // 是否去掉暂停词
+        if (remove_stop_word)
+        {
+            Remostop_wrod(vc, res);
+            vc = move(res);
         }
     }
 
 private:
-};
-
-//自定义比较工具
-class CmpUtil
-{
-public:
-    //难度比较
-    static bool Starcmp(const string&a,const string&b)
+    // 去除暂停词
+    static void Remostop_wrod(const vector<string> &src, vector<string> &res)
     {
-        int n1,n2;
-        if(a=="简单")
-        n1=0;
-        else if(a=="中等")
-        n1=1;
-        else 
-        n1=2;
-        
-        if(b=="简单")
-        n2=0;
-        else if(b=="中等")
-        n2=1;
-        else 
-        n2=2;
-
-        return n1<n2;
+        for (int i = 0; i < src.size(); i++)
+        {
+            if (stop_words[src[i]] == 0)
+            {
+                res.push_back(src[i]);
+            }
+        }
     }
+
 private:
+    static cppjieba::Jieba jieba;
+    static unordered_map<string, int> stop_words;
 };
+cppjieba::Jieba Jieba_util::jieba(DICT_PATH, HMM_PATH, USER_DICT_PATH, IDF_PATH, STOP_WORD_PATH);
+unordered_map<string, int> Jieba_util::stop_words;
+//////////////////////////////////////////////////////////////////////////////////////////////////

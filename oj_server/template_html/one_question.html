@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js" type="text/javascript"
         charset="utf-8"></script>
     <!-- 引入jquery CDN -->
-    <script src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <style>
         * {
@@ -151,14 +151,13 @@
 
 <body>
     <div class="container">
-        <!-- 导航栏， 功能不实现-->
         <div class="navbar">
             <a href="/">首页</a>
             <a href="/all_questions">题库</a>
-            <a href="#">竞赛(待开发)</a>
-            <a href="#">讨论(待开发)</a>
-            <a href="#">求职(待开发)</a>
-            <a class="login" href="#">登录</a>
+            <div class="login">
+                <a href="/user_index">登录</a>
+                <a href="#" style="display: none;">注销</a>
+            </div>
         </div>
         <!-- 左右呈现，题目描述和预设代码 -->
         <div class="part1">
@@ -217,7 +216,32 @@
             enableLiveAutocompletion: true
         });
 
-        function show_result(data) {
+        $(document).ajaxSend(function(event, xhr, settings) 
+        {
+            var token = localStorage.getItem('token');
+            if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+            }
+        });
+
+        $(document).ready(function() 
+        {
+            var token = localStorage.getItem('token');
+            if (token) {
+                $('.login a:first-child').hide(); // 隐藏登录按钮
+                $('.login a:last-child').show(); // 显示注销按钮
+            }
+        });
+
+        // 注销功能
+        $('.login a:last-child').click(function() 
+        {
+            localStorage.removeItem('token'); // 清除 token
+            $('.login a:first-child').show(); // 显示登录按钮
+            $('.login a:last-child').hide(); // 隐藏注销按钮
+        });
+        function show_result(data) 
+        {
             var result_div = $(".container .part2 .result");
             // 清空上一次的运行结果
             result_div.empty();
@@ -254,12 +278,6 @@
         function submit() 
         {
             
-            
-            document.querySelector(".btn-submit").disabled = true;
-            setTimeout(function() {
-                document.querySelector(".btn-submit").disabled = false;
-            }, cooldownTime);
-
             // 1. 收集当前页面的有关数据, 1. 题号 2.代码
             var code = editor.getSession().getValue();
 
@@ -275,8 +293,10 @@
                     url: judge_url,   // 向后端指定的url发起请求
                     dataType: 'json', // 告知server，我需要什么格式
                     contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
-                    data: JSON.stringify({
+                    data: JSON.stringify
+                    ({
                         'code': code,
+                        'language':'cpp',
                         'input': ''
                     }),
                     success: function (data) {
@@ -290,12 +310,7 @@
 
         function runTest() 
         {
-            document.querySelector(".btn-run").disabled = true;
-        setTimeout(function() {
-            document.querySelector(".btn-run").disabled = false;
-        }, cooldownTime);
-
-
+            
             var code = editor.getSession().getValue();
 
             var testData = document.getElementById("testInput").value;
@@ -312,15 +327,20 @@
                     contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
                     data: JSON.stringify({
                         'code': code,
+                        'language':'c++',
                         'input':testData
                     }),
-                    success: function (data) {
+                    success: function (data) 
+                    {
                         //成功得到结果
                         // console.log(data);
                         show_result(data);
                     }
                 });
         }
+
+        
+        
     </script>
 </body>
 </html>

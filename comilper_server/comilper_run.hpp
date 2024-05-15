@@ -12,6 +12,7 @@ public:
     // json格式
     ////////////////////////////////////////
     // 输入:
+    // language:编程语言
     // input:用户的输入
     // code:用户的代码
     // cpu_limit:程序时间约束
@@ -34,14 +35,26 @@ public:
 
         string code = in_val["code"].asString();
         string input = in_val["input"].asString();
+        string lag_string = in_val["language"].asString();
+
         int cpu_limit = in_val["cpu_limit"].asInt();
         int mem_limit = in_val["mem_limit"].asInt();
 
         int code_status = 0;
         int run_res = 0;
 
+        // 编程语言
+        progra_lage lag;
+
         // 形成唯一文件名
         string file_name = FileUtil::Uniqe_file_name();
+
+        // 如果无法找到编程语言
+        if (Prog_language_Util::lang_string_to(lag_string, lag) == false)
+        {
+            code_status = -4;
+            goto END;
+        }
 
         // 如果代码为空
         if (code.size() == 0)
@@ -51,21 +64,21 @@ public:
         }
 
         // 向唯一文件写入code
-        if (FileUtil::WrtieFile(PathUtil::Src(file_name), code) == false)
+        if (FileUtil::WrtieFile(PathUtil::Src(file_name, lag), code) == false)
         {
             code_status = -2;
             goto END;
         }
-        
-        //向唯一输入文件写入input
-        if(FileUtil::WrtieFile(PathUtil::Stdin(file_name),input)==false)
+
+        // 向唯一输入文件写入input
+        if (FileUtil::WrtieFile(PathUtil::Stdin(file_name), input) == false)
         {
-            code_status=-1;
+            code_status = -1;
             goto END;
         }
-        
+
         // 编译code
-        if (Comilper::Comilp(file_name) == false)
+        if (Comilper::Comilp(file_name, lag) == false)
         {
             // 读取编译错误结果
             code_status = -3;
@@ -109,16 +122,16 @@ public:
 
         // 反序列化结果
         Json::StyledWriter writer;
-        
-        //out_json = writer.write(out_val);
-        out_json=StringUtil::JsonToString(out_val);
-        Remove_temp(file_name);
+
+        // out_json = writer.write(out_val);
+        out_json = StringUtil::JsonToString(out_val);
+        Remove_temp(file_name, lag);
     }
 
     // 清理临时文件
-    void static Remove_temp(const string &file_name)
+    void static Remove_temp(const string &file_name, const progra_lage &lag)
     {
-        string path_name = PathUtil::Src(file_name);
+        string path_name = PathUtil::Src(file_name, lag);
         if (FileUtil::Is_file_exists(path_name))
             unlink(path_name.c_str());
 
@@ -162,6 +175,9 @@ private:
         case -3:
             // 编译错误
             FileUtil::ReadFile(PathUtil::Comilperror(file_name), desc, true);
+            break;
+        case -4:
+            desc = "无法找到编译 编程语言";
             break;
         case SIGABRT:
             desc = "内存超出范围";
