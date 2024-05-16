@@ -96,9 +96,9 @@ int main(int argnum, char *argvs[])
     // 修改题目代码
     srv.Post(pre_http_path + R"(/modify_question_code/(\d+))", Http_control::Modify_question_code);
 
-    srv.set_base_dir("./wwwroot/");
+    //srv.set_base_dir("./wwwroot/");
 
-    srv.listen("0.0.0.0", port);
+    srv.listen("127.0.0.1", port);
 
     return 0;
 }
