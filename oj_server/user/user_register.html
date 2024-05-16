@@ -101,9 +101,9 @@
 <body>
     <!-- 导航栏 -->
     <div class="navbar">
-        <a href="/">首页</a>
-        <a href="/all_questions">题库</a>
-        <a class="login" href="/user_index">登录</a>
+        <a href="/OJ">首页</a>
+        <a href="/OJ/all_questions">题库</a>
+        <a class="login" href="/OJ/user_index"></a>
     </div>
 
     <div class="container">
@@ -139,7 +139,7 @@
             var phone = document.getElementById('phone').value;
             var code = document.getElementById('code').value;
 
-            var url = "/register"; // 处理注册的URL
+            var url = "/OJ/register"; // 处理注册的URL
 
             // 使用AJAX调用注册用户
             $.ajax
@@ -166,7 +166,7 @@
                             alert("注册成功");
                             document.getElementById('registration-form').reset();
                             // 重定向到登录页面
-                            window.location.href = "/user_index";
+                            window.location.href = "/OJ/user_index";
                             // 注册成功后重定向或执行其他操作
                         }
                         else 

@@ -101,8 +101,7 @@
             float: left;
         }
 
-        .container .part2 .btn-submit 
-        {
+        .container .part2 .btn-submit {
             padding: 10px 10px;
             transition: color 0.3s ease;
             background-color: #343a40;
@@ -120,7 +119,7 @@
         }
 
 
-        .container .part2 .btn-run{
+        .container .part2 .btn-run {
             padding: 10px 10px;
             transition: color 0.3s ease;
             background-color: #343a40;
@@ -137,8 +136,7 @@
             color: #ffc107;
         }
 
-        .container .part2 .result 
-        {
+        .container .part2 .result {
             margin-top: 15px;
             margin-left: 15px;
         }
@@ -152,10 +150,10 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <a href="/">首页</a>
-            <a href="/all_questions">题库</a>
+            <a href="/OJ">首页</a>
+            <a href="/OJ/all_questions">题库</a>
             <div class="login">
-                <a href="/user_index">登录</a>
+                <a href="/OJ/user_index">登录</a>
                 <a href="#" style="display: none;">注销</a>
             </div>
         </div>
@@ -171,22 +169,28 @@
         </div>
         <!-- 提交并且得到结果，并显示 -->
         <div class="part2">
-            <input type="text" id="testInput" placeholder="标准输入 stdin" style="margin-right: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <input type="text" id="testInput" placeholder="标准输入 stdin"
+                style="margin-right: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
             <div class="result"></div>
             <button class="btn-submit" onclick="submit()">提交代码</button>
             <!-- 添加测试运行按钮 -->
             <button class="btn-run" onclick="runTest()">测试运行</button>
-        
+
         </div>
     </div>
 
     <style>
         /* 禁用状态的按钮样式 */
-        .btn-submit[disabled], .btn-run[disabled] {
-            background-color: #413c3c; /* 灰色背景 */
-            color: #999; /* 灰色文本 */
-            border-color: #999; /* 灰色边框 */
-            cursor: not-allowed; /* 鼠标不可点击样式 */
+        .btn-submit[disabled],
+        .btn-run[disabled] {
+            background-color: #413c3c;
+            /* 灰色背景 */
+            color: #999;
+            /* 灰色文本 */
+            border-color: #999;
+            /* 灰色边框 */
+            cursor: not-allowed;
+            /* 鼠标不可点击样式 */
         }
     </style>
 
@@ -216,16 +220,14 @@
             enableLiveAutocompletion: true
         });
 
-        $(document).ajaxSend(function(event, xhr, settings) 
-        {
+        $(document).ajaxSend(function (event, xhr, settings) {
             var token = localStorage.getItem('token');
             if (token) {
                 xhr.setRequestHeader('Authorization', 'Bearer ' + token);
             }
         });
 
-        $(document).ready(function() 
-        {
+        $(document).ready(function () {
             var token = localStorage.getItem('token');
             if (token) {
                 $('.login a:first-child').hide(); // 隐藏登录按钮
@@ -234,14 +236,12 @@
         });
 
         // 注销功能
-        $('.login a:last-child').click(function() 
-        {
+        $('.login a:last-child').click(function () {
             localStorage.removeItem('token'); // 清除 token
             $('.login a:first-child').show(); // 显示登录按钮
             $('.login a:last-child').hide(); // 隐藏注销按钮
         });
-        function show_result(data) 
-        {
+        function show_result(data) {
             var result_div = $(".container .part2 .result");
             // 清空上一次的运行结果
             result_div.empty();
@@ -275,16 +275,15 @@
                 // 编译运行出错,do nothing
             }
         }
-        function submit() 
-        {
-            
+        function submit() {
+
             // 1. 收集当前页面的有关数据, 1. 题号 2.代码
             var code = editor.getSession().getValue();
 
 
             var number = $(".container .part1 .left_desc h3 #number").text();
             // console.log(number);
-            var judge_url = "/judge/" + number;
+            var judge_url = "/OJ/judge/" + number;
             // console.log(judge_url);
             // 2. 构建json，并通过ajax向后台发起基于http的json请求
             $.ajax
@@ -294,11 +293,11 @@
                     dataType: 'json', // 告知server，我需要什么格式
                     contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
                     data: JSON.stringify
-                    ({
-                        'code': code,
-                        'language':'cpp',
-                        'input': ''
-                    }),
+                        ({
+                            'code': code,
+                            'language': 'cpp',
+                            'input': ''
+                        }),
                     success: function (data) {
                         //成功得到结果
                         // console.log(data);
@@ -308,15 +307,14 @@
             // 3. 得到结果，解析并显示到 result中
         }
 
-        function runTest() 
-        {
-            
+        function runTest() {
+
             var code = editor.getSession().getValue();
 
             var testData = document.getElementById("testInput").value;
             var number = $(".container .part1 .left_desc h3 #number").text();
             // console.log(number);
-            var judge_url = "/Testrun/" + number;
+            var judge_url = "/OJ/Testrun/" + number;
             // console.log(judge_url);
             // 2. 构建json，并通过ajax向后台发起基于http的json请求
             $.ajax
@@ -327,11 +325,10 @@
                     contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
                     data: JSON.stringify({
                         'code': code,
-                        'language':'c++',
-                        'input':testData
+                        'language': 'c++',
+                        'input': testData
                     }),
-                    success: function (data) 
-                    {
+                    success: function (data) {
                         //成功得到结果
                         // console.log(data);
                         show_result(data);
@@ -339,8 +336,9 @@
                 });
         }
 
-        
-        
+
+
     </script>
 </body>
+
 </html>

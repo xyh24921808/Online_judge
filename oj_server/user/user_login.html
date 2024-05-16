@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             padding: 0;
             background-color: #f6f6f6;
         }
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -25,6 +27,7 @@
             left: 0;
             z-index: 999;
         }
+
         .navbar a {
             color: #fff;
             text-decoration: none;
@@ -32,13 +35,16 @@
             font-size: 18px;
             transition: color 0.3s ease;
         }
+
         .navbar a:hover {
             color: #ffc107;
         }
+
         .navbar .login {
             margin-left: auto;
             margin-right: 15px;
         }
+
         .container {
             max-width: 400px;
             margin: 100px auto;
@@ -47,20 +53,24 @@
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 20px;
         }
+
         form {
             width: 100%;
         }
+
         label {
             display: block;
             margin-bottom: 10px;
             color: #333;
             font-weight: bold;
         }
+
         input[type="text"],
         input[type="password"] {
             width: calc(100% - 20px);
@@ -70,6 +80,7 @@
             border: 1px solid #ddd;
             box-sizing: border-box;
         }
+
         input[type="submit"],
         input[type="button"] {
             width: 100%;
@@ -81,21 +92,24 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         input[type="submit"]:hover,
         input[type="button"]:hover {
             background-color: #555;
         }
+
         .register-btn {
             margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
     <!-- 导航栏 -->
     <div class="navbar">
-        <a href="/">首页</a>
-        <a href="/all_questions">题库</a>
-        <a class="login" href="/user_index"></a>
+        <a href="/OJ">首页</a>
+        <a href="/OJ/all_questions">题库</a>
+        <a class="login" href="/OJ/user_index"></a>
     </div>
 
     <div class="container">
@@ -118,59 +132,54 @@
             // 获取用户名和密码输入框的值
             var account = document.getElementById('account').value;
             var password = document.getElementById('password').value;
-            var in_url = "/login";
+            var in_url = "/OJ/login";
             // 将数据封装成 JSON 格式
             $.ajax({
-                method: 'Post',   // 向后端发起请求的方式
-                url:in_url,   // 向后端指定的url发起请求
+                method: 'Post', // 向后端发起请求的方式
+                url: in_url, // 向后端指定的url发起请求
                 dataType: 'json', // 告知server，我需要什么格式
-                contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
+                contentType: 'application/json;charset=utf-8', // 告知server，我给你的是什么格式
                 data: JSON.stringify({
                     'account': account,
-                    'password':password
+                    'password': password
                 }),
                 success: function(data) {
                     // 登录成功，根据返回的消息显示成功信息
-                    if (data.status >= 1) 
-                    {
+                    if (data.status >= 1) {
                         alert("登录成功！");
                         localStorage.setItem('token', data.reason);
                         // 将登录按钮替换为注销按钮
                         $('.login').html('<button id="logout-btn">注销</button>');
                         // 给注销按钮添加点击事件，用于注销操作
-                        $('#logout-btn').click(function() 
-                        {
+                        $('#logout-btn').click(function() {
                             // 移除本地存储中的 token
                             localStorage.removeItem('token');
                             // 刷新页面
                             window.location.reload();
                         });
 
-                        window.location.href = "/"; // 将 "/other_page" 替换为你想要跳转的页面 URL
-                    } else 
-                    {
+                        window.location.href = "/OJ"; // 将 "/other_page" 替换为你想要跳转的页面 URL
+                    } else {
                         // 登录失败，根据返回的数据显示失败信息
                         alert("登录失败，请检查用户名和密码！");
                     }
                 }
             });
         });
-        
-        
-        document.getElementById('register-btn').addEventListener('click', function() 
-        {
-            window.location.href = "/register_index"; // 跳转到注册页面
+
+
+        document.getElementById('register-btn').addEventListener('click', function() {
+            window.location.href = "/OJ/register_index"; // 跳转到注册页面
         });
 
         // 在每个请求中将 token 添加到请求头部
-        $(document).ajaxSend(function(event, xhr, settings) 
-        {
+        $(document).ajaxSend(function(event, xhr, settings) {
             var token = localStorage.getItem('token');
-            if (token) 
-            {
+            if (token) {
                 xhr.setRequestHeader('Authorization', 'Bearer ' + token);
             }
         });
     </script>
 </body>
+
 </html>

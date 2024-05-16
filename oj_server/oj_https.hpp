@@ -9,9 +9,25 @@ using namespace httplib;
 #define USER_INDEX_HTML_PATH "./user/user_login.html"       // 用户登录界面
 #define USER_REGISTER_HTML_PATH "./user/user_register.html" // 用户登录界面
 
+#define ROOT_HTML_PATH "./wwwroot/index.html"
 class Http_control
 {
 public:
+    //请求主页 Get
+    static void Get_root_index_get(const Request &reqs, Response &reps)
+    {
+        string html;
+        if(FileUtil::ReadFile(ROOT_HTML_PATH,html,true))
+        {
+            reps.set_content(html, "text/html;charset=utf-8");
+        }
+        else 
+        {
+            reps.status = 404;
+            reps.set_content("404 Not Found", "text/plain");
+        }
+    }
+
     // 请求题库 Get
     static void Get_all_questions_get(const Request &reqs, Response &reps)
     {

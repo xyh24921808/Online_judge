@@ -23,7 +23,7 @@ int port = 80;
 static Control *ctrl_ptr = nullptr;
 Control *Http_control::_ctrl = nullptr;
 
-const string pre_http_path = "";
+const string pre_http_path = "/OJ";
 
 void Recovery(int signo)
 {
@@ -56,6 +56,9 @@ int main(int argnum, char *argvs[])
     Control ctrl;
     ctrl_ptr = &ctrl;
     Http_control::_ctrl = &ctrl;
+
+    // 获取主页
+    srv.Get(pre_http_path, Http_control::Get_root_index_get);
 
     // 拉取题库
     srv.Get(pre_http_path + "/all_questions", Http_control::Get_all_questions_get);
@@ -96,9 +99,9 @@ int main(int argnum, char *argvs[])
     // 修改题目代码
     srv.Post(pre_http_path + R"(/modify_question_code/(\d+))", Http_control::Modify_question_code);
 
-    //srv.set_base_dir("./wwwroot/");
+    // srv.set_base_dir("./wwwroot/");
 
-    srv.listen("127.0.0.1", port);
+    srv.listen("0.0.0.0", port);
 
     return 0;
 }
