@@ -59,6 +59,7 @@ int main(int argnum, char *argvs[])
 
     // 获取主页
     srv.Get(pre_http_path, Http_control::Get_root_index_get);
+    srv.Get(pre_http_path+"/", Http_control::Get_root_index_get);
 
     // 拉取题库
     srv.Get(pre_http_path + "/all_questions", Http_control::Get_all_questions_get);
